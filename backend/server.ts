@@ -4,6 +4,7 @@ import path from 'path';
 import uploadRoutes from './routes/upload';
 import simulateRoutes from './routes/simulate';
 import playbookRoutes from './routes/playbook';
+import aiRoutes from './routes/ai';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/upload', uploadRoutes);
 app.use('/api/simulate', simulateRoutes);
 app.use('/api/playbook', playbookRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Serve test_data for demo
 app.use('/test_data', express.static(path.join(__dirname, '..', 'test_data')));
