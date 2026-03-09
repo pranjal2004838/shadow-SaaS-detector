@@ -207,3 +207,20 @@ Next Steps I will take if you say "Go":
 3. Run local end-to-end test and record the demo.  
 
 If you want me to implement step 1 now, tell me and I will create the backend files and run tests locally.
+
+UI Decision & Frontend Stack (update)
+------------------------------------
+UI approach: "Polished Minimalism" — clear, credible, and one standout interactive element (the Savings Simulator). Avoid distracting animations; focus on clarity and polish. Prominent `DEMO MODE` banner and microcopy to prevent confusion.
+
+Recommended frontend stack for the UI:
+- Framework: React (function components + hooks)
+- Tooling: Vite (or Create React App if preferred)
+- Styling: Chakra UI (component library) + Tailwind CSS for small custom utility styles
+- State/Server sync: React Query (TanStack) for API calls and optimistic updates
+- HTTP: axios or fetch
+- Charts: Recharts for risk bars and summaries
+- PDF: jsPDF + html2canvas for quick export
+
+This stack matches the demo goals: fast to build, accessible components, and polished visuals without heavy engineering.
+
+Last updated: 2026-03-09
