@@ -114,4 +114,67 @@ export async function playbookUndo(
   return response.data;
 }
 
+// ─── AI Interfaces ───────────────────────────────────────────────────────────
+
+export interface RiskAssessmentEntry {
+  appName: string;
+  category: string;
+  cost: number;
+  level: 'critical' | 'high' | 'medium' | 'low';
+  score: number;
+  reasoning: string;
+  mainRisks: string[];
+  recommendations: string[];
+}
+
+export interface ConsolidationEntry {
+  category: string;
+  keep: string[];
+  remove: string[];
+  reasoning: string;
+  estimatedSavings: number;
+}
+
+export interface ComplianceIssue {
+  app: string;
+  policy: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  description: string;
+  recommendation: string;
+}
+
+export interface ComplianceReport {
+  generatedAt: string;
+  totalApps: number;
+  criticalIssues: number;
+  complianceScore: number;
+  issues: ComplianceIssue[];
+  summary: string;
+  forecast12Months: string;
+  actionItems: string[];
+}
+
+// ─── AI API calls ─────────────────────────────────────────────────────────────
+
+export async function getAIRiskAssessment(
+  detectedApps: DetectedApp[]
+): Promise<Record<string, RiskAssessmentEntry>> {
+  const response = await api.post('/ai/risk-assessment', { detectedApps });
+  return response.data.assessments as Record<string, RiskAssessmentEntry>;
+}
+
+export async function getAIConsolidation(
+  detectedApps: DetectedApp[]
+): Promise<ConsolidationEntry[]> {
+  const response = await api.post('/ai/consolidation', { detectedApps });
+  return response.data.recommendations as ConsolidationEntry[];
+}
+
+export async function getAIComplianceReport(
+  detectedApps: DetectedApp[]
+): Promise<ComplianceReport> {
+  const response = await api.post('/ai/compliance-report', { detectedApps });
+  return response.data.report as ComplianceReport;
+}
+
 export default api;

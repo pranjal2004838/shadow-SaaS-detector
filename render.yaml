@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: shadow-saas-detector
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: >
+      cd frontend && npm install && npm run build &&
+      cd ../backend && npm install && npm run build:prod
+    startCommand: cd backend && NODE_ENV=production node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GOOGLE_GENERATIVE_AI_API_KEY
+        sync: false

@@ -1,3 +1,7 @@
+import * as dotenv from 'dotenv';
+// Load .env.local first (local overrides), then .env as fallback
+dotenv.config({ path: '.env.local' });
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import path from 'path';

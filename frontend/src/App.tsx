@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import Simulator from './components/Simulator';
+import AIInsights from './components/AIInsights';
 import DemoStory from './pages/DemoStory';
 import Toast from './components/Toast';
 import type { DetectedApp } from './services/api';
 import './index.css';
 
-type Tab = 'dashboard' | 'simulator' | 'demo';
+type Tab = 'dashboard' | 'simulator' | 'ai' | 'demo';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('dashboard');
@@ -38,6 +39,13 @@ export default function App() {
           💰 Simulator
         </button>
         <button
+          className={`nav-tab ${tab === 'ai' ? 'active' : ''}`}
+          onClick={() => setTab('ai')}
+          data-testid="ai-tab-btn"
+        >
+          🤖 AI Insights
+        </button>
+        <button
           className={`nav-tab ${tab === 'demo' ? 'active' : ''}`}
           onClick={() => setTab('demo')}
         >
@@ -57,6 +65,10 @@ export default function App() {
 
       {tab === 'simulator' && (
         <Simulator detectedApps={detectedApps} />
+      )}
+
+      {tab === 'ai' && (
+        <AIInsights detectedApps={detectedApps} />
       )}
 
       {tab === 'demo' && (
