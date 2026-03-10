@@ -9,6 +9,7 @@
   "scripts": {
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ..",
     "dev": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\"",
+    "start": "cd backend && NODE_ENV=production npm run start:prod",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
