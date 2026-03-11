@@ -38,14 +38,17 @@ function parseCSV(csvContent: string): ExpenseRow[] {
   const lines = csvContent.trim().split('\n');
   if (lines.length < 2) return [];
   const headers = lines[0].split(',').map((h) => h.trim());
-  return lines.slice(1).map((line) => {
-    const values = line.split(',').map((v) => v.trim());
-    const row: Record<string, string> = {};
-    headers.forEach((h, i) => {
-      row[h] = values[i] || '';
-    });
-    return row as unknown as ExpenseRow;
-  });
+  return lines
+    .slice(1)
+    .map((line) => {
+      const values = line.split(',').map((v) => v.trim());
+      const row: Record<string, string> = {};
+      headers.forEach((h, i) => {
+        row[h] = values[i] !== undefined ? values[i] : '';
+      });
+      return row as unknown as ExpenseRow;
+    })
+    .filter((row) => row.Description && row.Description.trim() !== ''); // Only keep rows with Description
 }
 
 export function detectShadowSaaS(
@@ -67,6 +70,9 @@ export function detectShadowSaaS(
 
   // Match expenses against SaaS database
   for (const expense of expenses) {
+    // Skip rows with missing Description
+    if (!expense.Description || expense.Description.trim() === '') continue;
+    
     const desc = expense.Description.toLowerCase();
     for (const saas of saasDB) {
       const matched = saas.keywords.some((kw) => desc.includes(kw.toLowerCase()));
