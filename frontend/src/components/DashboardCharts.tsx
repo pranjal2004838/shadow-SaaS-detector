@@ -8,7 +8,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import type { DetectedApp } from '../services/api';
 
@@ -54,8 +53,9 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 // Custom label for pie chart
-const renderCustomLabel = ({ name, percent }: { name: string; percent: number }) => {
-  if (percent < 0.05) return null;
+const renderCustomLabel = (props: any) => {
+  const { name, percent } = props;
+  if (!name || !percent || percent < 0.05) return null;
   return `${name} (${(percent * 100).toFixed(0)}%)`;
 };
 
