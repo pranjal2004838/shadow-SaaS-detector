@@ -35,7 +35,8 @@ app.get('/api/health', (_req, res) => {
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'frontend', 'dist')));
-  app.get('*', (_req, res) => {
+  // Fallback SPA route (catch-all)
+  app.use((_req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'dist', 'index.html'));
   });
 }
