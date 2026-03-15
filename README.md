@@ -867,6 +867,3 @@ ISC License - See LICENSE file for details.
 
 MIT
 **Estimated time to build: 64 hours (8 days)**  
-**Estimated prize: $750-2,000**  
-
-Ready? Let's build! 🚀
