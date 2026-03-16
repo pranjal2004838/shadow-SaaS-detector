@@ -309,8 +309,6 @@ export default function Dashboard({
               onClick={() => {
                 setDetectedApps([]);
                 setRevokedApps(new Set());
-                setConnectStep('idle');
-                setConnectSource(null);
                 setShowManualUpload(false);
                 if (expRef.current) expRef.current.value = '';
                 if (brRef.current) brRef.current.value = '';
