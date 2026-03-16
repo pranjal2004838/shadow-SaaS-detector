@@ -8,6 +8,8 @@
   },
   "scripts": {
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ..",
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npm run build:prod",
+    "start": "cd backend && NODE_ENV=production node dist/server.js",
     "dev": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\"",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
