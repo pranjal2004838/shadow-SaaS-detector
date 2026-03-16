@@ -62,13 +62,13 @@ describe('Playbook Service', () => {
       expect(email.body).toContain('emails');
     });
 
-    it('should include DEMO MODE disclaimer', () => {
+    it('should include Preview signature', () => {
       const email = generateRevokeEmail(
         { name: 'Test', id: 1 },
         [],
         'test.com'
       );
-      expect(email.body).toContain('DEMO MODE');
+      expect(email.body).toContain('Preview');
     });
   });
 

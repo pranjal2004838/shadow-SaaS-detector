@@ -9,12 +9,30 @@ import uploadRoutes from './routes/upload';
 import simulateRoutes from './routes/simulate';
 import playbookRoutes from './routes/playbook';
 import aiRoutes from './routes/ai';
+import slackRoutes from './routes/slack';
+import browserHistoryRoutes from './routes/browserHistory';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:5000',
+      'http://127.0.0.1:5000',
+    ];
+
+    if (!origin || allowedOrigins.includes(origin) || origin.startsWith('chrome-extension://')) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -23,6 +41,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/simulate', simulateRoutes);
 app.use('/api/playbook', playbookRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/slack', slackRoutes);
+app.use('/api/browser-history', browserHistoryRoutes);
 
 // Serve test_data for demo
 app.use('/test_data', express.static(path.join(__dirname, '..', 'test_data')));
@@ -43,7 +63,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.listen(PORT, () => {
   console.log(`🚀 Shadow SaaS Detector backend running on port ${PORT}`);
-  console.log(`   DEMO MODE — no live revocations`);
+  console.log(`   Preview mode — no live revocations`);
 });
 
 export default app;

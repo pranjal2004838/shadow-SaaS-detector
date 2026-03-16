@@ -10,6 +10,7 @@ export interface DetectedApp {
   name: string;
   category: string;
   typical_price: number;
+  source?: string;
   risk_level?: string;
   employee?: string;
   department?: string;
@@ -175,6 +176,11 @@ export async function getAIComplianceReport(
 ): Promise<ComplianceReport> {
   const response = await api.post('/ai/compliance-report', { detectedApps });
   return response.data.report as ComplianceReport;
+}
+
+export async function getSlackApps(): Promise<DetectedApp[]> {
+  const response = await api.get('/slack/apps');
+  return (response.data.apps || []) as DetectedApp[];
 }
 
 export default api;

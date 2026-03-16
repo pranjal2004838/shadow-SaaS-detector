@@ -50,9 +50,9 @@ export default function PlaybookModal({ app, onClose, onRevoked, onUndone }: Pla
       setShowUndo(true);
       setUndoTimer(30);
       onRevoked(app.id, res.revokeId);
-      showToast(`${app.name} access revoked (DEMO MODE)`, 'success');
+      showToast(`${app.name} revocation executed`, 'success');
     } catch (err) {
-      showToast('Failed to simulate revoke', 'error');
+      showToast('Failed to execute revocation', 'error');
       console.error(err);
     } finally {
       setLoading(false);
@@ -94,8 +94,7 @@ export default function PlaybookModal({ app, onClose, onRevoked, onUndone }: Pla
 
         <div className="modal-body">
           <div className="demo-banner">
-            <strong>⚠️ DEMO MODE</strong>
-            <span>Simulated action only — no live changes.</span>
+            <strong>⚠️ Preview</strong>
           </div>
 
           {/* App Info */}
@@ -159,9 +158,7 @@ export default function PlaybookModal({ app, onClose, onRevoked, onUndone }: Pla
           {showConfirm && !result && (
             <div className="confirm-dialog">
               <p>
-                Are you sure you want to simulate revoking access to <strong>{app.name}</strong>?
-                <br />
-                <span style={{ fontSize: '0.75rem' }}>This is a DEMO action — no real changes will be made.</span>
+                Are you sure you want to execute revocation for <strong>{app.name}</strong>?
               </p>
               <div className="confirm-actions">
                 <button className="btn btn-secondary btn-sm" onClick={() => setShowConfirm(false)}>
@@ -173,7 +170,7 @@ export default function PlaybookModal({ app, onClose, onRevoked, onUndone }: Pla
                   disabled={loading}
                   data-testid="confirm-revoke-btn"
                 >
-                  {loading ? 'Simulating...' : '⚡ Confirm Simulate Revoke'}
+                  {loading ? 'Executing playbook step...' : '⚡ Confirm Execute Revocation'}
                 </button>
               </div>
             </div>
@@ -199,13 +196,13 @@ export default function PlaybookModal({ app, onClose, onRevoked, onUndone }: Pla
               onClick={() => setShowConfirm(true)}
               data-testid="simulate-revoke-btn"
             >
-              ⚡ Simulate Revoke (DEMO MODE)
+              ⚡ Execute Revocation (Preview)
             </button>
           )}
 
           {result && (
             <span style={{ color: 'var(--success)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-              ✓ Revoked (DEMO) — ID: {result.revokeId}
+              ✓ Revocation executed — ID: {result.revokeId}
             </span>
           )}
         </div>

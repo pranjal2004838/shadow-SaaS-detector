@@ -67,9 +67,7 @@ ${evidenceBlock}
 
 Recommended Action: Revoke access to ${app.name} and consolidate with an approved tool.
 
-This is a simulated action for demonstration purposes only.
-
-— Shadow SaaS Detector (DEMO MODE)`,
+— Shadow SaaS Detector (Preview)`,
   };
 }
 

@@ -29,7 +29,7 @@ export default function App() {
           <span className="header-tagline">Enterprise Shadow IT Discovery & Compliance Platform</span>
         </div>
         <div className="app-header-right">
-          <span className="demo-badge">Demo Mode</span>
+          <span className="demo-badge">Preview</span>
           {detectedApps.length > 0 && (
             <span className="app-count-badge">{detectedApps.length} apps found</span>
           )}

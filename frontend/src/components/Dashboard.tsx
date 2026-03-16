@@ -1,18 +1,37 @@
-import { useState, useRef, useCallback } from 'react';
-import { uploadFiles, type DetectedApp } from '../services/api';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { uploadFiles, getSlackApps, type DetectedApp } from '../services/api';
 import PlaybookModal from './PlaybookModal';
 import DashboardCharts from './DashboardCharts';
 import { showToast } from './Toast';
+import useCountUp from '../hooks/useCountUp';
 
 interface DashboardProps {
   detectedApps: DetectedApp[];
-  setDetectedApps: (apps: DetectedApp[]) => void;
+  setDetectedApps: React.Dispatch<React.SetStateAction<DetectedApp[]>>;
   revokedApps: Set<string | number>;
   setRevokedApps: React.Dispatch<React.SetStateAction<Set<string | number>>>;
 }
 
 type ConnectStep = 'idle' | 'connecting' | 'scanning' | 'done';
 type ConnectSource = 'google' | 'microsoft' | 'expense' | null;
+
+const mergeDetectedApps = (baseApps: DetectedApp[], incomingApps: DetectedApp[]): DetectedApp[] => {
+  const merged = new Map<string, DetectedApp>();
+
+  for (const app of baseApps) {
+    const key = `${app.source || 'upload'}:${app.name.toLowerCase()}`;
+    merged.set(key, app);
+  }
+
+  for (const app of incomingApps) {
+    const key = `${app.source || 'upload'}:${app.name.toLowerCase()}`;
+    if (!merged.has(key)) {
+      merged.set(key, app);
+    }
+  }
+
+  return Array.from(merged.values());
+};
 
 export default function Dashboard({
   detectedApps,
@@ -31,6 +50,31 @@ export default function Dashboard({
   const expRef = useRef<HTMLInputElement>(null);
   const brRef = useRef<HTMLInputElement>(null);
 
+  const fetchSlackAppsSafe = useCallback(async (): Promise<DetectedApp[]> => {
+    try {
+      return await getSlackApps();
+    } catch {
+      return [];
+    }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('slack') !== 'connected') return;
+
+    fetchSlackAppsSafe().then((slackApps) => {
+      if (slackApps.length > 0) {
+        setDetectedApps((prev) => mergeDetectedApps(prev, slackApps));
+        showToast(`Connected Slack Workspace — found ${slackApps.length} installed apps`, 'success');
+      }
+    });
+
+    params.delete('slack');
+    const next = params.toString();
+    const nextUrl = `${window.location.pathname}${next ? `?${next}` : ''}`;
+    window.history.replaceState({}, '', nextUrl);
+  }, [fetchSlackAppsSafe, setDetectedApps]);
+
   const handleUpload = async () => {
     if (!expensesFile && !browserFile) {
       showToast('Please select at least one file', 'error');
@@ -39,7 +83,8 @@ export default function Dashboard({
     setUploading(true);
     try {
       const res = await uploadFiles(expensesFile, browserFile);
-      setDetectedApps(res.detectedApps);
+      const slackApps = await fetchSlackAppsSafe();
+      setDetectedApps(mergeDetectedApps(res.detectedApps, slackApps));
       showToast(`Detected ${res.totalApps} shadow SaaS apps!`, 'success');
     } catch (err) {
       showToast('Upload failed. Check your files and try again.', 'error');
@@ -79,7 +124,8 @@ export default function Dashboard({
       const brFile = new File([brBlob], 'browser_history.json', { type: 'application/json' });
 
       const result = await uploadFiles(expFile, brFile);
-      setDetectedApps(result.detectedApps);
+      const slackApps = await fetchSlackAppsSafe();
+      setDetectedApps(mergeDetectedApps(result.detectedApps, slackApps));
       setConnectStep('done');
       showToast(`🔍 Scanned ${source === 'google' ? 'Google Workspace' : source === 'microsoft' ? 'Microsoft 365' : 'Expense System'} — found ${result.totalApps} shadow SaaS apps!`, 'success');
     } catch (err) {
@@ -87,7 +133,7 @@ export default function Dashboard({
       console.error(err);
       setConnectStep('idle');
     }
-  }, [setDetectedApps]);
+  }, [setDetectedApps, fetchSlackAppsSafe]);
 
   const handleRevoked = (appId: string | number, _revokeId: string) => {
     setRevokedApps((prev) => new Set(prev).add(appId));
@@ -105,6 +151,27 @@ export default function Dashboard({
   const highRiskCount = detectedApps.filter(
     (a) => a.risk_level === 'high' || a.risk_level === 'critical'
   ).length;
+  const categoryCount = new Set(detectedApps.map((a) => a.category)).size;
+  const departmentCount = new Set(detectedApps.map((a) => a.department).filter(Boolean)).size;
+
+  const animatedTotalApps = useCountUp(detectedApps.length, {
+    duration: 1500,
+    enabled: detectedApps.length > 0,
+  });
+  const animatedTotalSpend = useCountUp(totalSpend, {
+    duration: 1500,
+    enabled: detectedApps.length > 0,
+  });
+  const animatedHighRisk = useCountUp(highRiskCount, {
+    duration: 1500,
+    enabled: detectedApps.length > 0,
+  });
+  const animatedCategories = useCountUp(categoryCount, {
+    duration: 1500,
+    enabled: detectedApps.length > 0,
+  });
+
+  const formatCurrency = (value: number) => `$${Math.round(value).toLocaleString()}`;
 
   return (
     <div>
@@ -163,6 +230,17 @@ export default function Dashboard({
                     </div>
                     <span className="connect-arrow">→</span>
                   </button>
+
+                  <a className="integration-card" href="/api/slack/auth" data-testid="connect-slack">
+                    <div className="integration-icon">
+                      <div style={{ fontSize: '2rem', lineHeight: 1 }}>💬</div>
+                    </div>
+                    <div className="integration-info">
+                      <strong>Connect Slack Workspace</strong>
+                      <span>Authorize Slack and import installed apps live</span>
+                    </div>
+                    <span className="connect-arrow">→</span>
+                  </a>
                 </div>
 
                 <div className="connect-divider">
@@ -259,24 +337,22 @@ export default function Dashboard({
           <div className="stats-grid" data-testid="stats-grid">
             <div className="stat-card stat-card-highlight">
               <div className="stat-label">Total Apps Detected</div>
-              <div className="stat-value text-accent">{detectedApps.length}</div>
-              <div className="stat-sub">across {new Set(detectedApps.map((a) => a.department).filter(Boolean)).size} departments</div>
+              <div className="stat-value text-accent">{animatedTotalApps}</div>
+              <div className="stat-sub">across {departmentCount} departments</div>
             </div>
             <div className="stat-card">
               <div className="stat-label">Monthly Shadow Spend</div>
-              <div className="stat-value text-warning">${totalSpend}</div>
-              <div className="stat-sub">${totalSpend * 12}/yr projected</div>
+              <div className="stat-value text-warning">{formatCurrency(animatedTotalSpend)}</div>
+              <div className="stat-sub">{formatCurrency(totalSpend * 12)}/yr projected</div>
             </div>
             <div className="stat-card">
               <div className="stat-label">High / Critical Risk</div>
-              <div className="stat-value text-danger">{highRiskCount}</div>
+              <div className="stat-value text-danger">{animatedHighRisk}</div>
               <div className="stat-sub">require immediate action</div>
             </div>
             <div className="stat-card">
               <div className="stat-label">Categories</div>
-              <div className="stat-value text-success">
-                {new Set(detectedApps.map((a) => a.category)).size}
-              </div>
+              <div className="stat-value text-success">{animatedCategories}</div>
               <div className="stat-sub">tool categories found</div>
             </div>
           </div>
@@ -313,7 +389,10 @@ export default function Dashboard({
                 data-testid={`app-card-${app.id}`}
               >
                 <div className="app-card-header">
-                  <h3>{app.name}</h3>
+                  <h3>
+                    {app.name}
+                    {app.source === 'slack-live' && <span className="app-live-badge">Live</span>}
+                  </h3>
                   <span className={`risk-badge ${app.risk_level || 'low'}`}>
                     {app.risk_level || 'unknown'}
                   </span>

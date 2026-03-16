@@ -217,6 +217,42 @@ export default function AIInsights({ detectedApps }: AIInsightsProps) {
 
   return (
     <div data-testid="ai-insights">
+      <style>{`
+        @keyframes aiInsightsPulseDot {
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+          50% { opacity: 0.75; box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+        }
+      `}</style>
+      <div style={{ marginBottom: '1rem' }}>
+        <h2 style={{ marginBottom: '0.6rem' }}>🤖 AI Insights</h2>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.4rem 0.75rem',
+            borderRadius: '9999px',
+            background: 'rgba(59,130,246,0.12)',
+            border: '1px solid rgba(59,130,246,0.3)',
+            fontSize: '0.78rem',
+            color: 'var(--text-primary)',
+            fontWeight: 600,
+          }}
+          data-testid="LiveAI"
+        >
+          <span
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#22c55e',
+              animation: 'aiInsightsPulseDot 1.4s ease-in-out infinite',
+            }}
+            className="pulse-dot"
+          />
+          Powered by Gemini 1.5 Flash · Live AI Analysis
+        </div>
+      </div>
       {/* Sub-tabs */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         {(

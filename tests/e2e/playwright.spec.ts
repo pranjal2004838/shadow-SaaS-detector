@@ -57,7 +57,7 @@ test.describe('Shadow SaaS Detector E2E', () => {
 
     // Wait for modal
     await expect(page.locator('[data-testid="playbook-modal"]')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('.demo-banner')).toContainText('DEMO MODE');
+    await expect(page.locator('.demo-banner')).toContainText('Preview');
 
     // Take pre-simulate screenshot
     await page.waitForTimeout(300);

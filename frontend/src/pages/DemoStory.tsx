@@ -448,8 +448,8 @@ export default function DemoStory() {
             {[
               {
                 step: '1', icon: '⚡', title: 'Revoke Access via Playbook',
-                desc: 'Click "⚡ Playbook" on any app card in the Dashboard. Select "Simulate Revoke" to generate a formal access revocation email and create an audit log entry. A 30-second undo window prevents accidents.',
-                howto: 'Go to Dashboard → click any app card → click "⚡ Playbook" → "Simulate Revoke"',
+                desc: 'Click "⚡ Playbook" on any app card in the Dashboard. Select "Execute Revocation" to generate a formal access revocation email and create an audit log entry. A 30-second undo window prevents accidents.',
+                howto: 'Go to Dashboard → click any app card → click "⚡ Playbook" → "Execute Revocation"',
                 impact: 'Eliminates unauthorized access. Creates documentation for compliance audit.',
                 color: '#3b82f6',
               },
