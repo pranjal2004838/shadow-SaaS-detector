@@ -13,8 +13,7 @@ export function useCountUp(target: number, options: UseCountUpOptions = {}): num
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!enabled || target <= 0) {
-      setValue(0);
+    if (!enabled || target <= 0 || typeof window === 'undefined') {
       return;
     }
 
@@ -41,7 +40,7 @@ export function useCountUp(target: number, options: UseCountUpOptions = {}): num
     };
   }, [target, duration, enabled]);
 
-  return value;
+  return enabled && target > 0 ? value : 0;
 }
 
 export default useCountUp;

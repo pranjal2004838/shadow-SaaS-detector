@@ -1,21 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
+import { registerToastHandler, clearToastHandler, type ToastType } from '../services/toast';
 
 export interface ToastMessage {
   id: string;
   text: string;
-  type: 'success' | 'error' | 'info';
-}
-
-let addToastExternal: ((text: string, type: ToastMessage['type']) => void) | null = null;
-
-export function showToast(text: string, type: ToastMessage['type'] = 'info') {
-  if (addToastExternal) addToastExternal(text, type);
+  type: ToastType;
 }
 
 export default function Toast() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const addToast = useCallback((text: string, type: ToastMessage['type']) => {
+  const addToast = useCallback((text: string, type: ToastType) => {
     const id = `t_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     setToasts((prev) => [...prev, { id, text, type }]);
     setTimeout(() => {
@@ -24,8 +19,10 @@ export default function Toast() {
   }, []);
 
   useEffect(() => {
-    addToastExternal = addToast;
-    return () => { addToastExternal = null; };
+    registerToastHandler(addToast);
+    return () => {
+      clearToastHandler();
+    };
   }, [addToast]);
 
   if (toasts.length === 0) return null;

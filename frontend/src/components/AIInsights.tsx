@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   getAIRiskAssessment,
   getAIConsolidation,
@@ -155,50 +155,50 @@ export default function AIInsights({ detectedApps }: AIInsightsProps) {
   const [complianceError, setComplianceError] = useState<string | null>(null);
 
   // Auto-load risk assessment when apps are available
-  useEffect(() => {
-    if (detectedApps.length > 0 && !riskData && !riskLoading) {
-      loadRisk();
-    }
-  }, [detectedApps]);
-
-  const loadRisk = async () => {
+  const loadRisk = useCallback(async () => {
     setRiskLoading(true);
     setRiskError(null);
     try {
       const data = await getAIRiskAssessment(detectedApps);
       setRiskData(data);
-    } catch (e) {
+    } catch {
       setRiskError('Risk assessment failed — check backend connection.');
     } finally {
       setRiskLoading(false);
     }
-  };
+  }, [detectedApps]);
 
-  const loadConsolidation = async () => {
+  const loadConsolidation = useCallback(async () => {
     setConsolidationLoading(true);
     setConsolidationError(null);
     try {
       const data = await getAIConsolidation(detectedApps);
       setConsolidationData(data);
-    } catch (e) {
+    } catch {
       setConsolidationError('Consolidation analysis failed.');
     } finally {
       setConsolidationLoading(false);
     }
-  };
+  }, [detectedApps]);
 
-  const loadCompliance = async () => {
+  const loadCompliance = useCallback(async () => {
     setComplianceLoading(true);
     setComplianceError(null);
     try {
       const data = await getAIComplianceReport(detectedApps);
       setComplianceData(data);
-    } catch (e) {
+    } catch {
       setComplianceError('Compliance report generation failed.');
     } finally {
       setComplianceLoading(false);
     }
-  };
+  }, [detectedApps]);
+
+  useEffect(() => {
+    if (detectedApps.length > 0 && !riskData && !riskLoading) {
+      loadRisk();
+    }
+  }, [detectedApps.length, riskData, riskLoading, loadRisk]);
 
   const handleTabChange = (panel: typeof activePanel) => {
     setActivePanel(panel);

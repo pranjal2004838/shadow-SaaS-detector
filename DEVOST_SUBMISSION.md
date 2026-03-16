@@ -126,6 +126,25 @@ Shadow SaaS Detector discovers every unauthorized SaaS application across your o
 
 ---
 
+## 🏅 Category Award Readiness (Evidence for Judges)
+
+### Best AI Project
+
+- **AI is core to product flow**, not cosmetic: Detection → Risk Scoring → Consolidation → Compliance analysis.
+- **Model + fallback reliability**: Gemini 1.5 Flash used for intelligent analysis, with deterministic rule-based fallback when API is unavailable.
+- **Actionable outputs**: Each run produces severity, score, reasoning, main risks, and remediation recommendations.
+- **Business-grade AI use case**: Converts unstructured SaaS activity into policy-level decisions (GDPR/CCPA/SOC 2/HIPAA contexts).
+
+### Best Software Development Solution
+
+- **Production-ready engineering quality**: Full-stack TypeScript (frontend + backend), strict typing, modular services.
+- **Automated quality gates**: CI pipeline validates backend typecheck, frontend typecheck, linting, and unit tests.
+- **Verified test coverage for critical logic**: Playbook, simulator, and AI services covered by reproducible unit tests.
+- **Deployment maturity**: Production build path bundles frontend and backend correctly; app is deployable on Render.
+- **Local reproducibility command**: `npm run verify:ci` to run the same checks judges can trust.
+
+---
+
 ## 📊 Key Stats
 
 - **Detection Speed**: Analyzes 1000+ entries in < 2 minutes

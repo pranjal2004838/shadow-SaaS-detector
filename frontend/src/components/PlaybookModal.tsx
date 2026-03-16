@@ -5,7 +5,7 @@ import {
   type DetectedApp,
   type PlaybookSimulateResponse,
 } from '../services/api';
-import { showToast } from './Toast';
+import { showToast } from '../services/toast';
 
 interface PlaybookModalProps {
   app: DetectedApp;

@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { uploadFiles, getSlackApps, type DetectedApp } from '../services/api';
 import PlaybookModal from './PlaybookModal';
 import DashboardCharts from './DashboardCharts';
-import { showToast } from './Toast';
+import { showToast } from '../services/toast';
 import useCountUp from '../hooks/useCountUp';
 
 interface DashboardProps {
@@ -135,7 +135,7 @@ export default function Dashboard({
     }
   }, [setDetectedApps, fetchSlackAppsSafe]);
 
-  const handleRevoked = (appId: string | number, _revokeId: string) => {
+  const handleRevoked = (appId: string | number) => {
     setRevokedApps((prev) => new Set(prev).add(appId));
   };
 

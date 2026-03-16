@@ -53,7 +53,7 @@ const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?:
 };
 
 // Custom label for pie chart
-const renderCustomLabel = (props: any) => {
+const renderCustomLabel = (props: { name?: string; percent?: number }) => {
   const { name, percent } = props;
   if (!name || !percent || percent < 0.05) return null;
   return `${name} (${(percent * 100).toFixed(0)}%)`;

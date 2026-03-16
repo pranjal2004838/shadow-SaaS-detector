@@ -12,6 +12,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
+    "verify:ci": "cd backend && npm run typecheck && cd ../frontend && npx tsc --noEmit && npm run lint && cd .. && npm run test:unit",
     "start:backend": "cd backend && npm start",
     "start:frontend": "cd frontend && npm run dev"
   },
